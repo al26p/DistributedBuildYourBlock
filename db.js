@@ -22,6 +22,17 @@ const io = new Server(PORT, {
 
 console.log(`Serveur lancé sur le port ${PORT}.`);
 
+const io_cli = require('socket.io-client');
+var friends = new Array(0);
+for (const p of config.friends){
+  const s = io_cli(`http://localhost:${p}`, {
+    path: '/dbyb',
+  });
+  friends.push(s);
+}
+
+console.log(`Serveurs connectés`);
+
 const db = Object.create(null);
 
 io.on('connect', (socket) => {
@@ -35,12 +46,22 @@ io.on('connect', (socket) => {
   socket.on('set', function(field, value, callback){
     if (field in db) {
       console.log(`set error : Field ${field} exists.`);
-      db[field] = value;
-      callback(true);
+      callback(false);
     } else {
       console.log(`set ${field} : ${value}`);
       db[field] = value;
+      for (const f of friends){
+        console.log('Begin duplicate to', f.io.uri);
+        f.emit('set', field, value, (v) => {
+          console.log(`duplicate callback to ${f.io.uri} : ${v}`);
+        });
+      }
       callback(true);
     }
+  });
+
+  socket.on('keys', function(field, callback){
+    let keys = Object.keys(db);
+    callback(keys);
   });
 });

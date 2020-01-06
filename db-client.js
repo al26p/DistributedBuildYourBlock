@@ -29,9 +29,13 @@ socket.on('connect', () => {
     console.log(`get callback: ${value}`);
     acc = value || 0;
 
-    socket.emit('set', 'test', acc + 1, (value) => {
+    socket.emit('set', 'test2', acc + 1, (value) => {
       console.log(`set callback: ${value}`);
-      socket.close();
+      socket.emit('keys', 'test',(value) => {
+        console.log(`keys callback: ${value}`);
+
+        socket.close();
+      });
     });
   });
 });
