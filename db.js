@@ -21,12 +21,16 @@ io.on('connect', (socket) => {
   socket.on('set', function(field, value, callback){
     if (field in db) {
       console.log(`set error : Field ${field} exists.`);
-      db[field] = value;
-      callback(true);
+      callback(false);
     } else {
       console.log(`set ${field} : ${value}`);
       db[field] = value;
       callback(true);
     }
+  });
+
+  socket.on('keys', function(field, callback){
+    let keys = Object.keys(db);
+    callback(keys);
   });
 });
