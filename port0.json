@@ -1,4 +1,4 @@
 {
   "port": 8001,
-  "friends": [8000,8002]
+  "friends": ["http://localhost:8000","http://localhost:8002"]
 }
