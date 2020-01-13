@@ -27,7 +27,11 @@ socket.on('connect', () => {
   let param = process.argv[5] || null;
   if (process.argv[3] === "set") {
     console.log('true');
-    socket.emit(process.argv[3], process.argv[4], param, (value) => {
+    p = {
+      value: param,
+      timestamp: new Date()
+    }
+    socket.emit(process.argv[3], process.argv[4], p, (value) => {
       console.log(`get callback: ${value}`);
           acc = value || 0;
           socket.close();
